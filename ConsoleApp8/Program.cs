@@ -63,10 +63,16 @@ namespace ConsoleApp8
                 if (player.gold >= 500 && player.hp < 100)
                 {
                     Console.Clear();
-                    Console.WriteLine("휴식 중 입니다.");
-                    System.Threading.Thread.Sleep(3000);
+                    Console.WriteLine("휴식 중 입니다...");
+                    System.Threading.Thread.Sleep(1000);
+                    Console.WriteLine("휴식 중 입니다. . .");
+                    System.Threading.Thread.Sleep(1000);
+                    Console.WriteLine("휴식 중 입니다...");
+                    System.Threading.Thread.Sleep(1000);
+                    Console.Clear();
                     Console.WriteLine("휴식을 완료했습니다.");
                     System.Threading.Thread.Sleep(1000);
+                    
                     player.gold -= 500;
                     player.hp = 100;
                 }
@@ -127,17 +133,60 @@ namespace ConsoleApp8
 
             public void Fight(Player player)
             {
-                if (player.level % 2 == 0)
-                    player.level++;
+                Random random = new Random();
+                int isClear = random.Next(0, 101);
+                int smallDamage = 20 - player.shield;
+                int bigDamage = 35 - player.shield;
+                int isDamage = random.Next(0, 2);
+                int isGold = random.Next(player.damage, player.damage * 2 + 1);
+               
+                Console.Clear();
+                Console.WriteLine("던전 도는중...");
+                System.Threading.Thread.Sleep(1000);
+                Console.WriteLine("던전 도는중. . .");
+                System.Threading.Thread.Sleep(1000);
+                Console.WriteLine("던전 도는중...");
+                System.Threading.Thread.Sleep(1000);
+
+                if (player.shield < 5 && isClear <= 40)
+                {
+                    player.hp = player.hp / 2;
+                    Console.Clear();
+                    Console.WriteLine("던전 실패 (현재 체력의 절반을 잃었습니다)");
+                    System.Threading.Thread.Sleep(1000);
+                }
                 else
                 {
-                    player.damage++;
-                    player.level++;
+                    if (player.level % 2 == 0)
+                        player.level++;
+                    else
+                    {
+                        player.damage++;
+                        player.level++;
+                    }
+                   
+                    player.gold += 1000 + isGold;
+                    player.shield++;
+                    Console.Clear();
+                    Console.WriteLine("레벨이 올랐습니다.");
+                   
+                    if (isDamage == 0)
+                    {
+                        player.hp = player.hp - smallDamage;
+                        Console.WriteLine("1000G 를 획득하셨습니다. ");
+                        Console.WriteLine($"{isGold}G만큼의 보너스 Gold를 획득하셨습니다.");
+                        Console.WriteLine($"작은 타격 ({smallDamage})만큼의 체력을 잃었습니다.");
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    else if(isDamage == 1)
+                    {
+                        player.hp = player.hp - bigDamage;
+                        Console.WriteLine("1000G 를 획득하셨습니다. ");
+                        Console.WriteLine($"{isGold}G만큼의 보너스 Gold를 획득하셨습니다.");
+                        Console.WriteLine($"(큰 타격 {bigDamage})만큼의 체력을 잃었습니다.");
+                        System.Threading.Thread.Sleep(1000);
+                    }
                 }
-                player.shield++;
-                Console.Clear();
-                Console.WriteLine("레벨이 올랐습니다.");
-                System.Threading.Thread.Sleep(1000);
             }
 
         }
@@ -182,7 +231,6 @@ namespace ConsoleApp8
 
                 return " ";                   
             }
-
             public void isReSale(Player player)
             {
                 Scene scene = new Scene();
@@ -195,12 +243,26 @@ namespace ConsoleApp8
                     this.isSale = true;
                     player.gold += (this.price * 85) / 100;
                     this.isEquip = false;
+                   
                     scene.Exit();
                     Console.WriteLine("판매가 완료되었습니다.");
                     System.Threading.Thread.Sleep(1000);
                 }
             }
-
+            public void IsSameType(List<Item> items)
+            {
+                if (items[1].isEquip || items[2].isEquip || items[3].isEquip)
+                {
+                    Console.Clear();
+                    items[1].isEquip = false;
+                    items[2].isEquip = false;
+                    items[3].isEquip = false;
+                  
+                    this.isEquip = true;
+                    Console.WriteLine("기존 착용중이던 아이템이 해제되었습니다.");
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
 
             public Item(int itemNum,string itemName,int status,string ex,int price,bool isSale,bool isEquip)
             {
@@ -269,27 +331,12 @@ namespace ConsoleApp8
             List<Item> itemlist = new List<Item>();
             RestRoom restRoom = new RestRoom();
 
-            itemlist.Add(new Item(1, "무쇠갑옷     ",5, "수련에 도움을 주는 갑옷입니다.", 1000, false, true));
+            itemlist.Add(new Item(1, "무쇠갑옷     ",5, "수련에 도움을 주는 갑옷입니다.", 1000, true, false));
             itemlist.Add(new Item(2, "스파르타의 창", 7, "스파르타의 전사들이 사용했다는 전설의 창입니다.", 800, true, false));
             itemlist.Add(new Item(3, "낡은 검      ", 2, "쉽게 볼 수 있는 낡은 검입니다.", 600, true, false));
             itemlist.Add(new Item(4, "기사의 검    ", 12, "기사 계급이 사용하던 양날 한손검 입니다", 1200, true, false));
             player1.gold = 10000000;
-
-            //player1.hp = 1;
-            //player1.gold = 100000;
-            //player1.ShowPlayerInfo();
-            //player1.Fight(player1);
-            //Console.ReadLine();
-            //player1.ShowPlayerInfo();
-            //player1.Fight(player1);
-            //Console.ReadLine();
-            //player1.ShowPlayerInfo();
-            //player1.Fight(player1);
-            //Console.ReadLine();
-            //player1.ShowPlayerInfo();
-            //player1.Fight(player1);
-            //Console.ReadLine();
-
+            
             while (isGameOn)
             {
 /*메인화면*/    Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.\n이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.");
@@ -364,6 +411,7 @@ namespace ConsoleApp8
                                             case "2":
                                                 if (!itemlist[1].isEquip && !itemlist[1].isSale)
                                                 {
+                                                    itemlist[1].IsSameType(itemlist);
                                                     itemlist[1].isequip(player1);
                                                     itemlist[1].ShowItemInMyBag();
                                                     scene.EquipExit();
@@ -379,9 +427,10 @@ namespace ConsoleApp8
                                             case "3":
                                                 if (!itemlist[2].isEquip && !itemlist[2].isSale)
                                                 {
+                                                    itemlist[2].IsSameType(itemlist);
                                                     itemlist[2].isequip(player1);
                                                     itemlist[2].ShowItemInMyBag();
-                                                    scene.EquipExit();
+                                                    scene.EquipExit(); 
                                                     break;
                                                 }
                                                 else if (itemlist[2].isEquip && !itemlist[2].isSale)
@@ -394,6 +443,7 @@ namespace ConsoleApp8
                                             case "4":
                                                 if (!itemlist[3].isEquip && !itemlist[3].isSale)
                                                 {
+                                                    itemlist[3].IsSameType(itemlist);
                                                     itemlist[3].isequip(player1);
                                                     itemlist[3].ShowItemInMyBag();
                                                     scene.EquipExit();
@@ -487,7 +537,7 @@ namespace ConsoleApp8
                                         if (itemlist[1].isSale == true && player1.gold >= 800)
                                         {
                                             itemlist[1].isSale = false;
-                                            player1.gold -= 800;
+                                            player1.gold -= 800; 
                                             scene.Exit();
                                             Console.WriteLine($"구매하신 아이템 :{itemlist[1].itemName}");
                                             System.Threading.Thread.Sleep(1000);
@@ -647,6 +697,11 @@ namespace ConsoleApp8
                         {
                             case "1":
                                 player1.Fight(player1);
+                                if (player1.hp < 0)
+                                {
+                                    isGameOn = false;
+                                    Console.WriteLine("캐릭터가 죽었습니다.\n게임이 종료되었습니다.");
+                                }
                                 break;
                                 case "0":
                                 scene.Exit();
